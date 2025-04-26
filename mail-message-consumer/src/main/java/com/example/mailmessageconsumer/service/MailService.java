@@ -2,6 +2,7 @@ package com.example.mailmessageconsumer.service;
 
 import com.example.mailmessageconsumer.dto.MailMessage;
 import com.example.mailmessageconsumer.entity.MailLog;
+import com.example.mailmessageconsumer.exception.MailSendingException;
 import com.example.mailmessageconsumer.repository.MailLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class MailService {
             mailLog.setSuccess(false);
             mailLog.setErrorMessage(e.getMessage());
             LOGGER.error("Error sending mail to {}: {}", mailMessage.getRecipient(), e.getMessage());
+            throw new MailSendingException("Failed to send email to " + mailMessage.getRecipient(), e);
         } finally {
             mailLogRepository.save(mailLog);
         }

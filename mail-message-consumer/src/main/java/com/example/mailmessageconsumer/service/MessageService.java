@@ -2,6 +2,7 @@ package com.example.mailmessageconsumer.service;
 
 import com.example.mailmessageconsumer.dto.TextMessage;
 import com.example.mailmessageconsumer.entity.MessageLog;
+import com.example.mailmessageconsumer.exception.MessageSendingException;
 import com.example.mailmessageconsumer.repository.MessageLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -47,6 +48,7 @@ public class MessageService {
                 } catch (Exception e) {
                     errorMessage = e.getMessage();
                     LOGGER.error("Error sending Kakao message to {}: {}", textMessage.getRecipient(), errorMessage);
+                    throw new MessageSendingException("Failed to send Kakao message to " + textMessage.getRecipient(), e);
                 }
             }
             case "sms" -> {
@@ -56,6 +58,7 @@ public class MessageService {
                 } catch (Exception e) {
                     errorMessage = e.getMessage();
                     LOGGER.error("Error sending SMS to {}: {}", textMessage.getRecipient(), errorMessage);
+                    throw new MessageSendingException("Failed to send SMS message to " + textMessage.getRecipient(), e);
                 }
             }
             default -> LOGGER.error("Unsupported message type: {}", textMessage.getMessageType());
